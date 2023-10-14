@@ -1,11 +1,13 @@
 const User = require("../models/user.js");
+const dotenv = require("dotenv").config();
 const router = require("express").Router();
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const jwtSecret = process.env.JWTSecret;
 
 router.get("/all", async (req, res) => {
   try {
     const users = await User.find();
-    console.log({ users });
     if (users.length === 0) {
       res.json({
         success: true,
@@ -214,6 +216,57 @@ router.put("/:id/toggle-verification", async (req, res) => {
     res.status(500).json({
       success: false,
       error: "An error occurred while toggling verification.",
+    });
+  }
+});
+
+router.delete("/:id", async (req, res) => {
+  const userId = req.params.id;
+
+  try {
+    if (userId === ":id") {
+      res.status(404).json({
+        success: false,
+        data: [],
+        error: "Id cannot be null.",
+      });
+    } else {
+      const deletedUser = await User.findByIdAndRemove(userId);
+
+      if (!deletedUser) {
+        return res.status(404).json({
+          success: false,
+          error: "User not found",
+        });
+      }
+
+      res.status(200).json({
+        success: true,
+        data: deletedUser,
+      });
+    }
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({
+      success: false,
+      error: "Server error",
+    });
+  }
+});
+
+router.delete("/deleteall", async (req, res) => {
+  try {
+    const users = await User.deleteMany(); // Deletes all users
+
+    res.status(200).json({
+      success: true,
+      data: "All users have been deleted " + users,
+    });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({
+      success: false,
+      error: "Server error",
     });
   }
 });
