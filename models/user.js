@@ -46,6 +46,12 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: "", // Default value for city
     },
+    progress_records: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "ProgressTracker", // Reference to the EHR model
+      },
+    ],
     country: {
       type: String,
       default: "", // Default value for country

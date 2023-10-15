@@ -11,6 +11,12 @@ const ehrScheama = new mongoose.Schema(
       type: String,
       required: true,
     },
+    progress_records: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "ProgressTracker", // Reference to the EHR model
+      },
+    ],
     formulations: Array,
     sources: Array,
     dosage: Array,
