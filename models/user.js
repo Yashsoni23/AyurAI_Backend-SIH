@@ -28,10 +28,12 @@ const userSchema = new mongoose.Schema(
       type: Number,
       default: 0, // Default value for age
     },
-    PHR: {
-      type: Array,
-      default: [], // Default value for PHR
-    },
+    PHR: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "EHR", // Reference to the EHR model
+      },
+    ],
     bad_habits: {
       type: Array,
       default: [], // Default value for bad_habits

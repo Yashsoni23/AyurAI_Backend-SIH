@@ -134,7 +134,7 @@ router.get("/:id", async (req, res) => {
         error: "Id cannot be null.",
       });
     } else {
-      const user = await User.findOne({ _id });
+      const user = await User.findOne({ _id }).populate("PHR");
 
       if (!user) {
         return res.status(404).json({
