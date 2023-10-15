@@ -18,6 +18,48 @@ const User = require("../models/user");
 //     "yoga_remcommandations": ["Practice yoga daily"]
 //   }
 
+router.get("/filter", async (req, res) => {
+  try {
+    const filter = {};
+
+    if (req.query.symptoms) {
+      const symptoms = req.query.symptoms.split(",");
+      filter["symptoms"] = {
+        $in: symptoms.map((symptom) => new RegExp(symptom, "i")),
+      };
+    }
+
+    if (req.query.disease) {
+      filter["disease"] = new RegExp(req.query.disease, "i");
+    }
+
+    if (req.query.drugs) {
+      filter["drugs"] = new RegExp(req.query.drugs, "i");
+    }
+
+    const ehrRecords = await EHR.find(filter);
+    if (ehrRecords.length > 0) {
+      res.status(200).json({
+        success: true,
+        data: ehrRecords,
+      });
+    } else {
+      res.status(200).json({
+        success: true,
+        data: "No records found",
+      });
+    }
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).json({
+      success: false,
+      data: [],
+      error:
+        "Something went wrong while fetching EHR records based on the filter.",
+    });
+  }
+});
+
 router.post("/create", async (req, res) => {
   try {
     const { userId, symptoms } = req.body;
